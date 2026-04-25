@@ -1,146 +1,73 @@
-// ===== LOADER =====
 window.addEventListener("load", () => {
   const loader = document.getElementById("siteLoader");
-  if (loader) {
-    setTimeout(() => {
-      loader.classList.add("hide");
-    }, 600);
-  }
-
+  if (loader) setTimeout(() => loader.classList.add("hide"), 450);
   initReveal();
 });
 
-// ===== MOBILE MENU =====
 const menuToggle = document.getElementById("menuToggle");
 const mobileMenu = document.getElementById("mobileMenu");
-
 if (menuToggle && mobileMenu) {
-  menuToggle.addEventListener("click", () => {
-    mobileMenu.classList.toggle("open");
-  });
-
-  mobileMenu.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => {
-      mobileMenu.classList.remove("open");
-    });
-  });
+  menuToggle.addEventListener("click", () => mobileMenu.classList.toggle("open"));
+  mobileMenu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => mobileMenu.classList.remove("open")));
 }
 
-// ===== TABS =====
-const tabButtons = document.querySelectorAll(".tab-btn");
-const tabPanels = document.querySelectorAll(".tab-panel");
-
-function openTab(tabId) {
-  tabButtons.forEach((btn) => {
-    btn.classList.toggle("active", btn.dataset.tab === tabId);
-  });
-
-  tabPanels.forEach((panel) => {
-    panel.classList.toggle("active", panel.id === tabId);
-  });
-
-  // re-run reveal inside opened tab
-  setTimeout(initReveal, 50);
-}
-
-tabButtons.forEach((btn) => {
+document.querySelectorAll(".tab-btn").forEach(btn => {
   btn.addEventListener("click", () => {
-    openTab(btn.dataset.tab);
+    const wrap = btn.closest(".main-panel, .xm-tabs-section, .tab-section, body");
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+    const panel = document.getElementById(btn.dataset.tab);
+    if (panel) panel.classList.add("active");
+    setTimeout(initReveal, 50);
   });
 });
 
-// ===== COPY CODE =====
 const copyBtn = document.getElementById("copyBtn");
 const inviteCode = document.getElementById("inviteCode");
 const toast = document.getElementById("toast");
-
-function showToast(message) {
-  if (!toast) return;
-  toast.textContent = message;
+function showToast(msg){
+  if(!toast) return;
+  toast.textContent = msg;
   toast.classList.add("show");
-
   clearTimeout(window.__toastTimer);
-  window.__toastTimer = setTimeout(() => {
-    toast.classList.remove("show");
-  }, 1800);
+  window.__toastTimer = setTimeout(()=>toast.classList.remove("show"),1800);
+}
+if(copyBtn){
+  copyBtn.addEventListener("click", async ()=>{
+    const code = inviteCode ? inviteCode.textContent.trim() : "";
+    try{ await navigator.clipboard.writeText(code); showToast("Đã copy mã " + code); }
+    catch(e){ showToast("Hãy copy thủ công: " + code); }
+  });
 }
 
-async function copyCode() {
-  const code = inviteCode ? inviteCode.textContent.trim() : "2KA3TU";
-
-  try {
-    await navigator.clipboard.writeText(code);
-    showToast(`Đã copy mã ${code}`);
-  } catch (err) {
-    const textArea = document.createElement("textarea");
-    textArea.value = code;
-    document.body.appendChild(textArea);
-    textArea.select();
-
-    try {
-      document.execCommand("copy");
-      showToast(`Đã copy mã ${code}`);
-    } catch (fallbackError) {
-      showToast("Không copy được, hãy copy thủ công");
-    }
-
-    document.body.removeChild(textArea);
-  }
-}
-
-if (copyBtn) {
-  copyBtn.addEventListener("click", copyCode);
-}
-
-// ===== FAQ =====
-const faqItems = document.querySelectorAll(".faq-item");
-
-faqItems.forEach((item) => {
-  const question = item.querySelector(".faq-question");
-  const answer = item.querySelector(".faq-answer");
-
-  if (!question || !answer) return;
-
-  question.addEventListener("click", () => {
-    const isOpen = item.classList.contains("open");
-
-    faqItems.forEach((otherItem) => {
-      otherItem.classList.remove("open");
-      const otherAnswer = otherItem.querySelector(".faq-answer");
-      if (otherAnswer) {
-        otherAnswer.style.maxHeight = null;
-      }
+document.querySelectorAll(".faq-item").forEach(item => {
+  const q = item.querySelector(".faq-question");
+  const ans = item.querySelector(".faq-answer");
+  if(!q || !ans) return;
+  q.addEventListener("click", () => {
+    const open = item.classList.contains("open");
+    document.querySelectorAll(".faq-item").forEach(i => {
+      i.classList.remove("open");
+      const a = i.querySelector(".faq-answer");
+      if(a) a.style.maxHeight = null;
     });
-
-    if (!isOpen) {
+    if(!open){
       item.classList.add("open");
-      answer.style.maxHeight = `${answer.scrollHeight}px`;
+      ans.style.maxHeight = ans.scrollHeight + "px";
     }
   });
 });
 
-// ===== REVEAL LIKE AOS =====
-function initReveal() {
-  const revealElements = document.querySelectorAll(".reveal");
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("show");
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    {
-      threshold: 0.14,
-      rootMargin: "0px 0px -40px 0px",
-    }
-  );
-
-  revealElements.forEach((el) => {
-    if (!el.classList.contains("show")) {
-      observer.observe(el);
-    }
-  });
+function initReveal(){
+  const els = document.querySelectorAll(".reveal");
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add("show");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {threshold:.12, rootMargin:"0px 0px -30px 0px"});
+  els.forEach(el => !el.classList.contains("show") && observer.observe(el));
 }
