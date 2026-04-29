@@ -1,11 +1,37 @@
-Đặt ảnh vào assets/img:
-bing-x.svg
-chart-btc.png
-feedback-main.png
-feedback-grid.jpg
+Cấu trúc ảnh cần bỏ vào assets/img:
+
+LOGO:
+bingx-logo.svg
+exness-logo.svg
+xm-logo.svg
+
+BINGX:
+bingx-card.png
+bingx-cube.png
+chart-bingx.png
+bg-bingx.jpg
+feedback-bingx.jpg
+
+EXNESS:
+exness-3d.png
+chart-exness.png
+bg-exness.jpg
+
+XM:
+xm-3d.png
+chart-xm.png
+bg-xm.jpg
+
+FEEDBACK dùng chung cho Exness và XM:
 feed-1.jpg
 feed-2.jpg
 feed-3.jpg
 feed-4.jpg
 
-Mở index.html để xem BingX. exness.html và xm.html là 2 trang còn lại.
+ICONS:
+icon-fee.png
+icon-fast.png
+icon-support.png
+icon-community.png
+
+Mở index.html để xem BingX.
